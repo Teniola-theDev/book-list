@@ -37,7 +37,13 @@ UI.prototype.showAlert = function (msg, className) {
 
   setTimeout(function () {
     div.remove();
-  }, 2500);
+  }, 2000);
+};
+
+UI.prototype.deleteElement = function (target) {
+  if (target.className === 'delete') {
+    target.parentElement.parentElement.remove();
+  }
 };
 //event listeners
 document.getElementById('book-form').addEventListener('submit', function (e) {
@@ -56,10 +62,16 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
     // alert('enter a book');
     ui.showAlert('Ensure all values are correctly filled', 'error');
   } else {
-    ui.showAlert('You have successfully entered a book', 'success');
+    ui.showAlert('You have successfully entered a book.', 'success');
     ui.addBookToList(book);
     ui.clearFields();
   }
 });
 
-console.log(UI);
+document.getElementById('book-list').addEventListener('click', function (e) {
+  const ui = new UI();
+  console.log('clicked');
+  ui.deleteElement(e.target);
+  ui.showAlert('Successfully Deleted.', 'success');
+  e.preventDefault();
+});
