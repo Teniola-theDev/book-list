@@ -17,16 +17,15 @@ class UI {
   <td > <a href="#" class='delete'>X</a> </td>
   `;
     list.appendChild(row);
-    console.log(row);
   }
 
+  /////////
   showAlert(msg, className) {
     // create div
-    console.log('no book entered');
     const div = document.createElement('div');
     div.className = `alert ${className}`;
     div.appendChild(document.createTextNode(msg));
-    console.log(div);
+
     const container = document.querySelector('.container');
     const form = document.getElementById('book-form');
     container.insertBefore(div, form);
@@ -35,6 +34,7 @@ class UI {
       div.remove();
     }, 2000);
   }
+  //////
   clearFields() {
     document.getElementById('title').value = '';
     document.getElementById('author').value = '';
@@ -48,7 +48,45 @@ class UI {
   }
 }
 
+class Store {
+  static getBooks() {
+    let books;
+    if (localStorage.getItem('books') === null) {
+      books = [];
+    } else {
+      books = JSON.parse(localStorage.getItem('books'));
+    }
+    return books;
+  }
+  static displayBooks() {
+    const books = Store.getBooks();
+
+    books.forEach(function (book) {
+      const ui = new UI();
+      ui.addBookToList(book);
+    });
+  }
+  static addBook(book) {
+    const books = Store.getBooks();
+    books.push(book);
+    localStorage.setItem('books', JSON.stringify(books));
+  }
+  static removeBook(isbn) {
+    const books = Store.getBooks();
+    books.forEach(function (book, index) {
+      console.log(index);
+      if (book.isbn === isbn) {
+        books.splice(index, 1);
+      }
+    });
+
+    localStorage.setItem('books', JSON.stringify(books));
+  }
+}
+
 // EVENT LISTENERS
+
+document.addEventListener('DOMContentLoaded', Store.displayBooks);
 document.getElementById('book-form').addEventListener('submit', function (e) {
   //get form (dom) values
   const title = document.getElementById('title').value,
@@ -68,13 +106,18 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
     ui.showAlert('You have successfully entered a book. ', 'success');
     ui.addBookToList(book);
     ui.clearFields();
+    Store.addBook(book);
   }
 });
 
 document.getElementById('book-list').addEventListener('click', function (e) {
   const ui = new UI();
-  console.log('clicked');
+
   ui.deleteElement(e.target);
+
+  Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
+
   ui.showAlert('Successfully Deleted.', 'success');
+
   e.preventDefault();
 });
