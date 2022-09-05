@@ -62,7 +62,7 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
     // alert('enter a book');
     ui.showAlert('Ensure all values are correctly filled', 'error');
   } else {
-    ui.showAlert('You have successfully entered a book.', 'success');
+    ui.showAlert('You have successfully entered a book. ', 'success');
     ui.addBookToList(book);
     ui.clearFields();
   }
